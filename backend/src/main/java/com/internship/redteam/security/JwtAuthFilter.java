@@ -28,8 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // 🔥 skip login/register/refresh
-        if (path.startsWith("/auth")) {
+        // allow auth + h2-console
+        if (path.startsWith("/auth/") || path.startsWith("/h2-console")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,8 +44,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 String email = jwtUtil.extractEmail(token);
 
+                // 🔥 FIXED: Add ROLE
                 UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                Collections.singletonList(() -> "ROLE_ADMIN")
+                        );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
