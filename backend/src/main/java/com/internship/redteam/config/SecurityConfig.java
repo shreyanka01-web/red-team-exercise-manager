@@ -20,7 +20,7 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
-    // 🔥 COMPLETELY IGNORE H2 (IMPORTANT)
+    // Ignore H2 console
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/h2-console/**");
@@ -40,6 +40,7 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/email/**").permitAll()   // 🔥 ALLOW EMAIL
                 .anyRequest().authenticated()
             )
 

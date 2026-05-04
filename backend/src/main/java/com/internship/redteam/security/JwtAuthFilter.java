@@ -28,8 +28,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // allow auth + h2-console
-        if (path.startsWith("/auth/") || path.startsWith("/h2-console")) {
+        // 🔥 ALLOW PUBLIC ENDPOINTS
+        if (path.startsWith("/auth/") ||
+            path.startsWith("/h2-console") ||
+            path.startsWith("/email/")) {
+
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,7 +47,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 String email = jwtUtil.extractEmail(token);
 
-                // 🔥 FIXED: Add ROLE
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 email,
